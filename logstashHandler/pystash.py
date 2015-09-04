@@ -8,6 +8,7 @@ import logging
 from socket import socket, AF_INET, SOCK_DGRAM, SOCK_STREAM, getfqdn
 from json import dumps
 from datetime import datetime as dt
+import ssl
 
 
 class handler(logging.Handler):
@@ -17,6 +18,10 @@ class handler(logging.Handler):
         self.host = kw.get('host', 'localhost')
         self.port = kw.get('port', None)
         self.fullInfo = kw.get('fullInfo', False)
+        self.use_ssl = kw.get('use_ssl', False)
+        self.keyfile = kw.get('keyfile', None)
+        self.certfile = kw.get('certfile', None)
+        self.ca_certs = kw.get('ca_certs', None)
         if self.proto == 'UDP' and self.port is None:
             raise ValueError('Must specify a port')
         if self.proto == 'TCP' and self.port is None:
@@ -35,11 +40,19 @@ class handler(logging.Handler):
             raise TypeError('Levels must be a dictionary')
 
     def emit(self, record, **kwargs):
+        """
+
+        :param record:
+        :param kwargs:
+        :return:
+        """
         levelLabel = self.levelLabel
         if self.proto == 'UDP':
             self.sock = socket(AF_INET, SOCK_DGRAM)
         if self.proto == 'TCP':
             self.sock = socket(AF_INET, SOCK_STREAM)
+            if self.use_ssl:
+                ssl.wrap_socket(self.sock, ca_certs=self.ca_certs, keyfile=self.keyfile, certfile=self.certfile )
             self.sock.connect((self.host, int(self.port)))
         recordDict = record.__dict__
         msgDict = {}
