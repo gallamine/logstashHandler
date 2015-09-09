@@ -53,7 +53,10 @@ class handler(logging.Handler):
             self.sock = socket(AF_INET, SOCK_STREAM)
             if self.use_ssl:
                 ssl.wrap_socket(self.sock, ca_certs=self.ca_certs, keyfile=self.keyfile, certfile=self.certfile )
-            self.sock.connect((self.host, int(self.port)))
+            try:
+                self.sock.connect((self.host, int(self.port)))
+            except Exception as e:
+                raise IOError('Connection error: %s' % e)
         recordDict = record.__dict__
         msgDict = {}
         msgDict['@version'] = '1'
