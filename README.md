@@ -57,10 +57,11 @@ To send additional fields to logstash, use the keyword extra and send a dict sta
     logger.warn('DANGER DANGER',extra={'extraFields':{'name':'W. Robinsson', 'planet':'Unkown'}})
 ```
 
+## TCP and SSL
 
+To use SSL (via a `ca_cert` or `keyfile`\`cert_file`, pass `use_ssl=True` along with`ca_certs="cafile"` or `certfile="certfile"` and `keyfile="keyfile"`. The socket will be wrapped prior to the connection.
 
 ## Fallbacks
 
-* TCP with SSL is not currently supported.
 * Buffer size is not taken into account.
 
