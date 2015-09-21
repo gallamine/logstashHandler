@@ -22,6 +22,7 @@ class handler(logging.Handler):
         self.keyfile = kw.get('keyfile', None)
         self.certfile = kw.get('certfile', None)
         self.ca_certs = kw.get('ca_certs', None)
+        self.raise_exception = kw.get('raise_exception', False)
         if self.proto == 'UDP' and self.port is None:
             raise ValueError('Must specify a port')
         if self.proto == 'TCP' and self.port is None:
@@ -56,7 +57,10 @@ class handler(logging.Handler):
             try:
                 self.sock.connect((self.host, int(self.port)))
             except Exception as e:
-                raise IOError('Connection error: %s' % e)
+                if self.raise_exception:
+                    raise IOError('Connection error: %s' % e)
+                else:
+                    pass
         recordDict = record.__dict__
         msgDict = {}
         msgDict['@version'] = '1'
