@@ -94,4 +94,7 @@ class handler(logging.Handler):
                 self.sock.sendall(msg)
                 self.sock.close()
             except Exception as e:
-                raise IOError('Could not send message via TCP: %s' % e)
+                if self.raise_exception:
+                    raise IOError('Could not send message via TCP: %s' % e)
+                else:
+                    pass
